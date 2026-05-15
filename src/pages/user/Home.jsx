@@ -5,7 +5,7 @@ import logo from '../../assets/logo.png'
 
 const Home = () => {
   return (
-<main className="text-white min-h-screen"> 
+    <main className="text-white min-h-screen">
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-8 py-24 flex flex-col md:flex-row items-center justify-between gap-12">
@@ -23,13 +23,13 @@ const Home = () => {
           <p className="text-gray-400 text-lg leading-relaxed max-w-lg">
             Join TEYZIX CORE's internship program and work on real-world projects with industry experts. Build your portfolio and kickstart your career.
           </p>
-          <div className="flex gap-4 mt-2">
+          <div className="flex flex-wrap gap-4 mt-2">
             <Link to="/internships"
-              className="flex items-center gap-2 bg-green-500 text-black font-semibold px-6 py-3 rounded hover:bg-green-400 transition">
+              className="flex items-center gap-2 bg-green-500 text-black font-semibold px-6 py-3 rounded hover:bg-green-400 transition whitespace-nowrap">
               View Internships <HiArrowRight />
             </Link>
             <Link to="/apply"
-              className="flex items-center gap-2 border border-green-900/50 text-gray-300 px-6 py-3 rounded hover:border-green-400 hover:text-green-400 transition">
+              className="flex items-center gap-2 border border-green-900/50 text-gray-300 px-6 py-3 rounded hover:border-green-400 hover:text-green-400 transition whitespace-nowrap">
               Apply Now
             </Link>
           </div>
@@ -99,7 +99,7 @@ const Home = () => {
           <h2 className="text-4xl font-bold">Ready to <span className="text-green-400">Get Started?</span></h2>
           <p className="text-gray-500 max-w-lg">Apply now and take the first step towards your dream tech career with Teyzix Core.</p>
           <Link to="/apply"
-            className="flex items-center gap-2 bg-green-500 text-black font-semibold px-8 py-3 rounded hover:bg-green-400 transition">
+            className="flex items-center gap-2 bg-green-500 text-black font-semibold px-8 py-3 rounded hover:bg-green-400 transition whitespace-nowrap">
             Apply Now <HiArrowRight />
           </Link>
         </div>
