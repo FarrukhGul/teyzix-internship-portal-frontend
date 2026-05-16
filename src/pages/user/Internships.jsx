@@ -14,10 +14,12 @@ const Internships = () => {
     const fetchInternships = async () => {
       try {
         const res = await getInternships()
+        console.log("res", res.data)
         setInternships(res.data.data)
       } catch (e) {
         console.log("error", e)
-        setError("Failed to load internships. Please try again.")
+        console.log("error response", e.response?.data)
+        setError(e.message + " | " + JSON.stringify(e.response?.data))
       } finally {
         setLoading(false)
       }
