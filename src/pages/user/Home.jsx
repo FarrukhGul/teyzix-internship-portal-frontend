@@ -3,7 +3,9 @@ import { HiArrowRight } from 'react-icons/hi'
 import { MdWork, MdPeople, MdStar } from 'react-icons/md'
 import logo from '../../assets/logo.png'
 
+
 const Home = () => {
+
   return (
     <main className="text-white min-h-screen">
 
@@ -13,7 +15,7 @@ const Home = () => {
         {/* Left */}
         <div className="flex-1 flex flex-col gap-6 text-left items-start">
           <span className="flex items-center gap-2 text-green-400 text-xs sm:text-sm font-medium tracking-widest uppercase border border-green-900/50 w-fit px-4 py-1 rounded-full">
-            ● Core of Innovation
+            <span className='animate-ping'>●</span> Core of Innovation
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
             Launch Your <br />

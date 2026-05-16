@@ -107,7 +107,7 @@ const Footer = () => {
             © {new Date().getFullYear()} Teyzix Core. All rights reserved.
           </p>
           <p className="text-xs text-gray-600">
-            Designed & Developed with ❤️ by <span className="text-green-400">Teyzix Core</span>
+            Designed & Developed  ❤️ by <span className="text-green-400">Farrukh Gul</span>
           </p>
         </div>
       </div>

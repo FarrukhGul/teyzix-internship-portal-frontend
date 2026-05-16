@@ -110,6 +110,10 @@ const AdminLogin = () => {
               }
             </button>
 
+            <div>
+              <h1 className='text-gray-400 font-light text-center'>Demo: Username =  admin, Password = admin123</h1>
+            </div>
+
           </form>
         </div>
 

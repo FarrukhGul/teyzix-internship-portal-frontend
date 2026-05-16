@@ -213,7 +213,7 @@ const Apply = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        placeholder="John Doe"
+                        placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
                       {formErrors.name && <p className="text-red-400 text-xs mt-1">{formErrors.name}</p>}
@@ -228,7 +228,7 @@ const Apply = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="john@example.com"
+                        placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
                       {formErrors.email && <p className="text-red-400 text-xs mt-1">{formErrors.email}</p>}
@@ -243,7 +243,7 @@ const Apply = () => {
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        placeholder="03001234567"
+                        placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
                       {formErrors.phoneNumber && <p className="text-red-400 text-xs mt-1">{formErrors.phoneNumber}</p>}
