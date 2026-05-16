@@ -3,7 +3,8 @@ import axios from 'axios'
 
 // create an axios instance 
 const API = axios.create({
-    baseURL : import.meta.env.VITE_API_URL || "https://teyzix-internship-portal-backend.onrender.com/api"
+    // baseURL : import.meta.env.VITE_API_URL || "https://teyzix-internship-portal-backend.onrender.com/api"
+    baseURL : import.meta.env.VITE_API_URL || "VITE_API_URL=http://localhost:3000/api"
 })
 
 
