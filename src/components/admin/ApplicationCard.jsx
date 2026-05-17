@@ -42,7 +42,7 @@ const ApplicationCard = ({ app }) => {
       </button>
 
       {expanded && (
-        <div className="bg-[#0a0a0a] border border-green-900/20 rounded-lg p-3 text-xs md:text-sm text-gray-400 leading-relaxed">
+        <div className="bg-[#0a0a0a] border wrap-break-word overflow-hidden border-green-900/20 rounded-lg p-3 text-xs md:text-sm text-gray-400 leading-relaxed">
           {app.message}
         </div>
       )}

@@ -11,6 +11,7 @@ const Internships = () => {
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    console.log("API URL:", import.meta.env.VITE_API_URL)
     const fetchInternships = async () => {
       try {
         const res = await getInternships()
