@@ -5,7 +5,6 @@ import { MdEmail, MdLocationOn, MdCheckCircle } from 'react-icons/md'
 import { FaSpinner } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 
-// ── Variants — EXACTLY same as Home ──────────────────────────────────────────
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (i = 0) => ({
@@ -22,13 +21,13 @@ const scaleUp = {
   }
 }
 
-// For individual social icons — no delay, parent stagger handles timing
-const iconFadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1, y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }
-  }
+// Social icon: slides in from left, stagger handled by parent
+const slideLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: (i = 0) => ({
+    opacity: 1, x: 0,
+    transition: { duration: 0.55, delay: i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }
+  })
 }
 
 const Contact = () => {
@@ -48,6 +47,14 @@ const Contact = () => {
       setSuccess(true)
     }, 1500)
   }
+
+  const socials = [
+    { icon: <FaLinkedin />, href: "https://www.linkedin.com/company/teyzixcore/", label: "LinkedIn" },
+    { icon: <FaInstagram />, href: "https://www.instagram.com/teyzixcore", label: "Instagram" },
+    { icon: <FaFacebook />, href: "https://www.facebook.com/share/1D68YsTEqK/", label: "Facebook" },
+    { icon: <FaTiktok />, href: "https://tiktok.com/@teyzixcore", label: "TikTok" },
+    { icon: <SiThreads />, href: "https://www.threads.com/@teyzixcore", label: "Threads" },
+  ]
 
   return (
     <main className="text-white min-h-screen" style={{ overflowX: 'hidden' }}>
@@ -116,7 +123,6 @@ const Contact = () => {
             visible: { transition: { staggerChildren: 0.13, delayChildren: 0.0 } }
           }}
         >
-          {/* Let's Talk */}
           <motion.div className="flex flex-col gap-6" variants={fadeUp} custom={0}>
             <h2 className="text-2xl font-bold text-white">Let's Talk</h2>
             <p className="text-gray-500 leading-relaxed">
@@ -149,12 +155,7 @@ const Contact = () => {
                 isLink: false,
               },
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                custom={i + 1}
-                whileHover={{ y: -3 }}
-              >
+              <motion.div key={i} variants={fadeUp} custom={i + 1} whileHover={{ y: -3 }}>
                 {item.isLink ? (
                   <a
                     href={item.href}
@@ -185,23 +186,11 @@ const Contact = () => {
             ))}
           </div>
 
-          {/* Social Links — parent variant se animate honge */}
+          {/* Social Links */}
           <motion.div className="flex flex-col gap-4" variants={fadeUp} custom={4}>
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Follow Us</h3>
-            <motion.div
-              className="flex gap-4"
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.08, delayChildren: 0.0 } }
-              }}
-            >
-              {[
-                { icon: <FaLinkedin />, href: "https://www.linkedin.com/company/teyzixcore/", label: "LinkedIn" },
-                { icon: <FaInstagram />, href: "https://www.instagram.com/teyzixcore", label: "Instagram" },
-                { icon: <FaFacebook />, href: "https://www.facebook.com/share/1D68YsTEqK/", label: "Facebook" },
-                { icon: <FaTiktok />, href: "https://tiktok.com/@teyzixcore", label: "TikTok" },
-                { icon: <SiThreads />, href: "https://www.threads.com/@teyzixcore", label: "Threads" },
-              ].map((social, i) => (
+            <div className="flex gap-4">
+              {socials.map((social, i) => (
                 <motion.a
                   key={i}
                   href={social.href}
@@ -209,14 +198,15 @@ const Contact = () => {
                   rel="noreferrer"
                   aria-label={social.label}
                   className="bg-green-500/10 border border-green-500/20 p-3 rounded-lg text-green-400 hover:bg-green-500/20 hover:text-green-300 transition text-xl"
-                  variants={iconFadeUp}
+                  variants={slideLeft}
+                  custom={i}
                   whileHover={{ y: -5, scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   {social.icon}
                 </motion.a>
               ))}
-            </motion.div>
+            </div>
           </motion.div>
 
         </motion.div>
