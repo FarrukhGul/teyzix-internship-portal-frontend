@@ -33,6 +33,10 @@ export const getInternshipsById = (id) => API.get(`/internships/${id}`);
 export const sendApplication = (data) => API.post('/applications', data);
 
 
+// analyze resume
+export const analyzeResume = (id) => API.post(`/admin/applications/${id}/analyze`)
+
+
 // Admin
 export const adminLogin = (data) => API.post('/admin/login', data);
 export const adminLogout = () => API.post('/admin/logout');

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getInternships, sendApplication } from '../../services/api'
-import { MdArrowBack, MdCheckCircle } from 'react-icons/md'
+import { MdArrowBack, MdCheckCircle, MdUploadFile } from 'react-icons/md'
 import { FaSpinner } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 
-// ── Variants (same as Home) ───────────────────────────────────────────────────
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (i = 0) => ({
@@ -37,6 +36,7 @@ const Apply = () => {
     phoneNumber: '',
     selectedDomain: '',
     message: '',
+    resume: null,
   })
 
   const [formErrors, setFormErrors] = useState({})
@@ -82,13 +82,26 @@ const Apply = () => {
 
   const handleInternshipChange = (e) => {
     const domain = e.target.value
-    console.log("Domain selected:", domain)
     setFormData(prev => ({ ...prev, selectedDomain: domain }))
     const selected = internships.find(i => i.domain === domain)
     setSelectedInternship(selected || null)
     if (formErrors.selectedDomain) {
       setFormErrors(prev => ({ ...prev, selectedDomain: '' }))
     }
+  }
+
+  const handleResumeChange = (e) => {
+    const file = e.target.files[0]
+    if (file && file.type !== 'application/pdf') {
+      setFormErrors(prev => ({ ...prev, resume: 'Only PDF files are allowed' }))
+      return
+    }
+    if (file && file.size > 5 * 1024 * 1024) {
+      setFormErrors(prev => ({ ...prev, resume: 'File size must be less than 5MB' }))
+      return
+    }
+    setFormData(prev => ({ ...prev, resume: file || null }))
+    setFormErrors(prev => ({ ...prev, resume: '' }))
   }
 
   const handleSubmit = async (e) => {
@@ -102,14 +115,24 @@ const Apply = () => {
       message: formData.message
     }
 
-    console.log("Submitting:", currentData)
-
     if (!validateForm(currentData)) return
 
     try {
       setSubmitting(true)
       setError(null)
-      await sendApplication(currentData)
+
+      // Use FormData to send file + text together
+      const payload = new FormData()
+      payload.append('name', currentData.name)
+      payload.append('email', currentData.email)
+      payload.append('phoneNumber', currentData.phoneNumber)
+      payload.append('selectedDomain', currentData.selectedDomain)
+      payload.append('message', currentData.message)
+      if (formData.resume) {
+        payload.append('resume', formData.resume)
+      }
+
+      await sendApplication(payload)
       setSuccess(true)
       setTimeout(() => navigate('/internships'), 2500)
     } catch (err) {
@@ -142,15 +165,11 @@ const Apply = () => {
           {/* Left — Form */}
           <div className="lg:col-span-2">
 
-            {/* Heading */}
             <motion.div
               className="mb-8 md:mb-12"
               initial="hidden"
               animate="visible"
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.13, delayChildren: 0.05 } }
-              }}
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.13, delayChildren: 0.05 } } }}
             >
               <motion.h1
                 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 md:mb-4"
@@ -168,11 +187,7 @@ const Apply = () => {
                   />
                 </span>
               </motion.h1>
-              <motion.p
-                className="text-gray-400 text-sm sm:text-base"
-                variants={fadeUp}
-                custom={1}
-              >
+              <motion.p className="text-gray-400 text-sm sm:text-base" variants={fadeUp} custom={1}>
                 Fill out the form to submit your application
               </motion.p>
             </motion.div>
@@ -182,19 +197,13 @@ const Apply = () => {
                 className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg mb-6 text-sm"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
               >
                 {error}
               </motion.div>
             )}
 
             {loading && (
-              <motion.div
-                className="flex justify-center items-center py-16 md:py-24"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4 }}
-              >
+              <motion.div className="flex justify-center items-center py-16 md:py-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="text-center">
                   <FaSpinner className="text-green-400 text-4xl md:text-5xl animate-spin mx-auto mb-4" />
                   <p className="text-gray-400">Loading internships...</p>
@@ -205,15 +214,9 @@ const Apply = () => {
             {success && (
               <motion.div
                 className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 md:p-12 text-center"
-                variants={scaleUp}
-                initial="hidden"
-                animate="visible"
+                variants={scaleUp} initial="hidden" animate="visible"
               >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 120, delay: 0.2 }}
-                >
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 120, delay: 0.2 }}>
                   <MdCheckCircle className="text-5xl md:text-6xl text-green-400 mx-auto mb-4" />
                 </motion.div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Application Submitted!</h2>
@@ -228,17 +231,13 @@ const Apply = () => {
                 className="space-y-6 md:space-y-8"
                 initial="hidden"
                 animate="visible"
-                variants={{
-                  hidden: {},
-                  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.15 } }
-                }}
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.13, delayChildren: 0.15 } } }}
               >
 
                 {/* Internship Select */}
                 <motion.div
                   className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-4 md:p-6"
-                  variants={fadeUp}
-                  custom={0}
+                  variants={fadeUp} custom={0}
                   whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                 >
                   <label className="block text-sm md:text-base font-semibold mb-3 md:mb-4">
@@ -258,11 +257,7 @@ const Apply = () => {
                     ))}
                   </select>
                   {formErrors.selectedDomain && (
-                    <motion.p
-                      className="text-red-400 text-xs md:text-sm mt-2"
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
+                    <motion.p className="text-red-400 text-xs md:text-sm mt-2" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
                       {formErrors.selectedDomain}
                     </motion.p>
                   )}
@@ -272,9 +267,7 @@ const Apply = () => {
                 {selectedInternship && (
                   <motion.div
                     className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
-                    variants={scaleUp}
-                    initial="hidden"
-                    animate="visible"
+                    variants={scaleUp} initial="hidden" animate="visible"
                   >
                     <h3 className="text-lg md:text-xl font-bold text-green-400 mb-2">{selectedInternship.title}</h3>
                     <p className="text-gray-400 text-sm mb-4 line-clamp-2">{selectedInternship.description}</p>
@@ -302,78 +295,85 @@ const Apply = () => {
                 {/* Personal Info */}
                 <motion.div
                   className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
-                  variants={fadeUp}
-                  custom={1}
+                  variants={fadeUp} custom={1}
                   whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                 >
                   <h3 className="text-base md:text-lg font-semibold text-green-400 mb-4 md:mb-6">Personal Information</h3>
                   <div className="space-y-4 md:space-y-5">
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Full Name <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder=""
-                        className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
-                      />
-                      {formErrors.name && (
-                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
-                          {formErrors.name}
-                        </motion.p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Email <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder=""
-                        className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
-                      />
-                      {formErrors.email && (
-                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
-                          {formErrors.email}
-                        </motion.p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Phone Number <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleInputChange}
-                        placeholder=""
-                        className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
-                      />
-                      {formErrors.phoneNumber && (
-                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
-                          {formErrors.phoneNumber}
-                        </motion.p>
-                      )}
-                    </div>
-
+                    {[
+                      { label: 'Full Name', name: 'name', type: 'text' },
+                      { label: 'Email', name: 'email', type: 'email' },
+                      { label: 'Phone Number', name: 'phoneNumber', type: 'tel' },
+                    ].map(field => (
+                      <div key={field.name}>
+                        <label className="block text-sm font-medium mb-2">
+                          {field.label} <span className="text-red-400">*</span>
+                        </label>
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={handleInputChange}
+                          className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
+                        />
+                        {formErrors[field.name] && (
+                          <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                            {formErrors[field.name]}
+                          </motion.p>
+                        )}
+                      </div>
+                    ))}
                   </div>
+                </motion.div>
+
+                {/* Resume Upload */}
+                <motion.div
+                  className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
+                  variants={fadeUp} custom={2}
+                  whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                >
+                  <h3 className="text-base md:text-lg font-semibold text-green-400 mb-4">
+                    Upload Resume <span className="text-gray-500 text-xs font-normal">(Optional)</span>
+                  </h3>
+                  <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-green-900/40 hover:border-green-500/50 rounded-xl p-6 cursor-pointer transition group">
+                    <MdUploadFile className="text-4xl text-green-400 group-hover:scale-110 transition-transform" />
+                    <div className="text-center">
+                      <p className="text-sm text-gray-300">
+                        {formData.resume ? formData.resume.name : 'Click to upload or drag & drop'}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">PDF only — max 5MB</p>
+                    </div>
+                    <input
+                      type="file"
+                      name="resume"
+                      accept=".pdf"
+                      onChange={handleResumeChange}
+                      className="hidden"
+                    />
+                  </label>
+                  {formData.resume && (
+                    <div className="flex items-center justify-between mt-3 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2">
+                      <span className="text-green-400 text-xs truncate">{formData.resume.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, resume: null }))}
+                        className="text-gray-500 hover:text-red-400 transition text-xs ml-2 shrink-0"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                  {formErrors.resume && (
+                    <motion.p className="text-red-400 text-xs mt-2" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                      {formErrors.resume}
+                    </motion.p>
+                  )}
                 </motion.div>
 
                 {/* Message */}
                 <motion.div
                   className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
-                  variants={fadeUp}
-                  custom={2}
+                  variants={fadeUp} custom={3}
                   whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
                 >
                   <h3 className="text-base md:text-lg font-semibold text-green-400 mb-4 md:mb-6">Why Do You Want This Internship?</h3>
@@ -404,11 +404,7 @@ const Apply = () => {
                 </motion.div>
 
                 {/* Buttons */}
-                <motion.div
-                  className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6"
-                  variants={fadeUp}
-                  custom={3}
-                >
+                <motion.div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6" variants={fadeUp} custom={4}>
                   <motion.button
                     type="submit"
                     disabled={submitting}
@@ -448,7 +444,7 @@ const Apply = () => {
                     'Fill all fields carefully and accurately',
                     'Use a valid email address you check regularly',
                     'Be authentic and genuine in your message',
-                    'Write at least 50 characters to stand out',
+                    'Upload your resume for better chances',
                   ].map((tip, i) => (
                     <motion.li
                       key={i}
