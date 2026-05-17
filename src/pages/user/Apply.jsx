@@ -3,6 +3,24 @@ import { useNavigate } from 'react-router-dom'
 import { getInternships, sendApplication } from '../../services/api'
 import { MdArrowBack, MdCheckCircle } from 'react-icons/md'
 import { FaSpinner } from 'react-icons/fa'
+import { motion } from 'framer-motion'
+
+// ── Variants (same as Home) ───────────────────────────────────────────────────
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.65, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }
+  })
+}
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: {
+    opacity: 1, scale: 1,
+    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }
+  }
+}
 
 const Apply = () => {
   const navigate = useNavigate()
@@ -64,7 +82,7 @@ const Apply = () => {
 
   const handleInternshipChange = (e) => {
     const domain = e.target.value
-    console.log("Domain selected:", domain) // debug
+    console.log("Domain selected:", domain)
     setFormData(prev => ({ ...prev, selectedDomain: domain }))
     const selected = internships.find(i => i.domain === domain)
     setSelectedInternship(selected || null)
@@ -76,7 +94,6 @@ const Apply = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // ✅ Latest formData directly use karo
     const currentData = {
       name: formData.name,
       email: formData.email,
@@ -85,7 +102,7 @@ const Apply = () => {
       message: formData.message
     }
 
-    console.log("Submitting:", currentData) // debug
+    console.log("Submitting:", currentData)
 
     if (!validateForm(currentData)) return
 
@@ -104,58 +121,126 @@ const Apply = () => {
   }
 
   return (
-   <main className="text-white min-h-screen py-8 md:py-16">
+    <main className="text-white min-h-screen py-8 md:py-16" style={{ overflowX: 'hidden' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
 
         {/* Back Button */}
-        <button
+        <motion.button
           onClick={() => navigate('/internships')}
           className="flex items-center gap-2 text-green-400 hover:text-green-300 transition mb-8 md:mb-12 text-sm md:text-base"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          whileHover={{ x: -4 }}
         >
           <MdArrowBack className="text-lg md:text-xl" />
           Back to Internships
-        </button>
+        </motion.button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
 
           {/* Left — Form */}
           <div className="lg:col-span-2">
-            <div className="mb-8 md:mb-12">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 md:mb-4">
-                Apply for <span className="text-green-400">Internship</span>
-              </h1>
-              <p className="text-gray-400 text-sm sm:text-base">Fill out the form to submit your application</p>
-            </div>
+
+            {/* Heading */}
+            <motion.div
+              className="mb-8 md:mb-12"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.13, delayChildren: 0.05 } }
+              }}
+            >
+              <motion.h1
+                className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 md:mb-4"
+                variants={fadeUp}
+                custom={0}
+              >
+                Apply for{' '}
+                <span className="text-green-400 relative inline-block">
+                  Internship
+                  <motion.span
+                    className="absolute bottom-0 left-0 w-full h-[2px] bg-green-400 origin-left"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.7, duration: 0.5 }}
+                  />
+                </span>
+              </motion.h1>
+              <motion.p
+                className="text-gray-400 text-sm sm:text-base"
+                variants={fadeUp}
+                custom={1}
+              >
+                Fill out the form to submit your application
+              </motion.p>
+            </motion.div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg mb-6 text-sm">
+              <motion.div
+                className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-lg mb-6 text-sm"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
                 {error}
-              </div>
+              </motion.div>
             )}
 
             {loading && (
-              <div className="flex justify-center items-center py-16 md:py-24">
+              <motion.div
+                className="flex justify-center items-center py-16 md:py-24"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4 }}
+              >
                 <div className="text-center">
                   <FaSpinner className="text-green-400 text-4xl md:text-5xl animate-spin mx-auto mb-4" />
                   <p className="text-gray-400">Loading internships...</p>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {success && (
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 md:p-12 text-center">
-                <MdCheckCircle className="text-5xl md:text-6xl text-green-400 mx-auto mb-4" />
+              <motion.div
+                className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 md:p-12 text-center"
+                variants={scaleUp}
+                initial="hidden"
+                animate="visible"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 120, delay: 0.2 }}
+                >
+                  <MdCheckCircle className="text-5xl md:text-6xl text-green-400 mx-auto mb-4" />
+                </motion.div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">Application Submitted!</h2>
                 <p className="text-gray-400 mb-4">Thank you! We'll review your application shortly.</p>
                 <p className="text-gray-500 text-sm">Redirecting you back...</p>
-              </div>
+              </motion.div>
             )}
 
             {!success && !loading && (
-              <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+              <motion.form
+                onSubmit={handleSubmit}
+                className="space-y-6 md:space-y-8"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.15 } }
+                }}
+              >
 
                 {/* Internship Select */}
-                <div className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-4 md:p-6">
+                <motion.div
+                  className="bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-xl p-4 md:p-6"
+                  variants={fadeUp}
+                  custom={0}
+                  whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                >
                   <label className="block text-sm md:text-base font-semibold mb-3 md:mb-4">
                     Select Internship <span className="text-red-400">*</span>
                   </label>
@@ -173,34 +258,54 @@ const Apply = () => {
                     ))}
                   </select>
                   {formErrors.selectedDomain && (
-                    <p className="text-red-400 text-xs md:text-sm mt-2">{formErrors.selectedDomain}</p>
+                    <motion.p
+                      className="text-red-400 text-xs md:text-sm mt-2"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {formErrors.selectedDomain}
+                    </motion.p>
                   )}
-                </div>
+                </motion.div>
 
                 {/* Selected Internship Preview */}
                 {selectedInternship && (
-                  <div className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6">
+                  <motion.div
+                    className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
+                    variants={scaleUp}
+                    initial="hidden"
+                    animate="visible"
+                  >
                     <h3 className="text-lg md:text-xl font-bold text-green-400 mb-2">{selectedInternship.title}</h3>
                     <p className="text-gray-400 text-sm mb-4 line-clamp-2">{selectedInternship.description}</p>
                     <div className="grid grid-cols-3 gap-2 md:gap-3">
-                      <div className="bg-green-500/10 rounded-lg p-2 md:p-3 text-center">
-                        <p className="text-xs text-gray-400">Duration</p>
-                        <p className="text-sm font-semibold text-green-400">{selectedInternship.duration}</p>
-                      </div>
-                      <div className="bg-green-500/10 rounded-lg p-2 md:p-3 text-center">
-                        <p className="text-xs text-gray-400">Stipend</p>
-                        <p className="text-sm font-semibold text-green-400">{selectedInternship.stipend}</p>
-                      </div>
-                      <div className="bg-green-500/10 rounded-lg p-2 md:p-3 text-center">
-                        <p className="text-xs text-gray-400">Slots</p>
-                        <p className="text-sm font-semibold text-green-400">{selectedInternship.slots}</p>
-                      </div>
+                      {[
+                        { label: 'Duration', value: selectedInternship.duration },
+                        { label: 'Stipend', value: selectedInternship.stipend },
+                        { label: 'Slots', value: selectedInternship.slots },
+                      ].map((item, i) => (
+                        <motion.div
+                          key={i}
+                          className="bg-green-500/10 rounded-lg p-2 md:p-3 text-center"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.1, type: 'spring', stiffness: 120 }}
+                        >
+                          <p className="text-xs text-gray-400">{item.label}</p>
+                          <p className="text-sm font-semibold text-green-400">{item.value}</p>
+                        </motion.div>
+                      ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Personal Info */}
-                <div className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6">
+                <motion.div
+                  className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
+                  variants={fadeUp}
+                  custom={1}
+                  whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                >
                   <h3 className="text-base md:text-lg font-semibold text-green-400 mb-4 md:mb-6">Personal Information</h3>
                   <div className="space-y-4 md:space-y-5">
 
@@ -216,7 +321,11 @@ const Apply = () => {
                         placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
-                      {formErrors.name && <p className="text-red-400 text-xs mt-1">{formErrors.name}</p>}
+                      {formErrors.name && (
+                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                          {formErrors.name}
+                        </motion.p>
+                      )}
                     </div>
 
                     <div>
@@ -231,7 +340,11 @@ const Apply = () => {
                         placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
-                      {formErrors.email && <p className="text-red-400 text-xs mt-1">{formErrors.email}</p>}
+                      {formErrors.email && (
+                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                          {formErrors.email}
+                        </motion.p>
+                      )}
                     </div>
 
                     <div>
@@ -246,14 +359,23 @@ const Apply = () => {
                         placeholder=""
                         className="w-full bg-[#0a0a0a] border border-green-900/30 rounded-lg px-4 py-2 md:py-3 text-sm md:text-base text-white focus:border-green-500/50 outline-none transition"
                       />
-                      {formErrors.phoneNumber && <p className="text-red-400 text-xs mt-1">{formErrors.phoneNumber}</p>}
+                      {formErrors.phoneNumber && (
+                        <motion.p className="text-red-400 text-xs mt-1" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                          {formErrors.phoneNumber}
+                        </motion.p>
+                      )}
                     </div>
 
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Message */}
-                <div className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6">
+                <motion.div
+                  className="bg-[#111] border border-green-900/30 rounded-xl p-4 md:p-6"
+                  variants={fadeUp}
+                  custom={2}
+                  whileHover={{ scale: 1.01, transition: { duration: 0.2 } }}
+                >
                   <h3 className="text-base md:text-lg font-semibold text-green-400 mb-4 md:mb-6">Why Do You Want This Internship?</h3>
                   <div>
                     <label className="block text-sm font-medium mb-2">
@@ -273,35 +395,52 @@ const Apply = () => {
                         {formData.message.length} / 50+
                       </p>
                     </div>
-                    {formErrors.message && <p className="text-red-400 text-xs mt-2">{formErrors.message}</p>}
+                    {formErrors.message && (
+                      <motion.p className="text-red-400 text-xs mt-2" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+                        {formErrors.message}
+                      </motion.p>
+                    )}
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6">
-                  <button
+                <motion.div
+                  className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6"
+                  variants={fadeUp}
+                  custom={3}
+                >
+                  <motion.button
                     type="submit"
                     disabled={submitting}
                     className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-black font-semibold py-3 md:py-4 rounded-lg hover:from-green-400 hover:to-green-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+                    whileHover={{ scale: submitting ? 1 : 1.03 }}
+                    whileTap={{ scale: submitting ? 1 : 0.97 }}
                   >
                     {submitting ? <><FaSpinner className="animate-spin" /> Submitting...</> : 'Submit Application'}
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
                     type="button"
                     onClick={() => navigate('/internships')}
                     className="px-4 md:px-6 bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 md:py-4 rounded-lg transition text-sm md:text-base"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
                   >
                     Cancel
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
 
-              </form>
+              </motion.form>
             )}
           </div>
 
           {/* Right — Tips */}
           <div className="hidden lg:block">
-            <div className="sticky top-20 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-2xl p-6 md:p-8 space-y-6">
+            <motion.div
+              className="sticky top-20 bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 rounded-2xl p-6 md:p-8 space-y-6"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
               <div>
                 <h3 className="text-lg font-bold text-green-400 mb-4">Quick Tips</h3>
                 <ul className="space-y-3 text-sm text-gray-300">
@@ -311,10 +450,16 @@ const Apply = () => {
                     'Be authentic and genuine in your message',
                     'Write at least 50 characters to stand out',
                   ].map((tip, i) => (
-                    <li key={i} className="flex gap-3 items-start">
+                    <motion.li
+                      key={i}
+                      className="flex gap-3 items-start"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + i * 0.1, duration: 0.4 }}
+                    >
                       <span className="text-green-400 font-bold text-lg leading-none">✓</span>
                       <span>{tip}</span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
               </div>
@@ -341,7 +486,7 @@ const Apply = () => {
                   💡 <span className="font-semibold text-green-400">Pro Tip:</span> Customize your message for each application to stand out!
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
         </div>
