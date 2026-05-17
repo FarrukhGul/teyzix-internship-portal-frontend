@@ -22,6 +22,15 @@ const scaleUp = {
   }
 }
 
+// For individual social icons — no delay, parent stagger handles timing
+const iconFadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1, y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }
+  }
+}
+
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [loading, setLoading] = useState(false)
@@ -107,6 +116,7 @@ const Contact = () => {
             visible: { transition: { staggerChildren: 0.13, delayChildren: 0.0 } }
           }}
         >
+          {/* Let's Talk */}
           <motion.div className="flex flex-col gap-6" variants={fadeUp} custom={0}>
             <h2 className="text-2xl font-bold text-white">Let's Talk</h2>
             <p className="text-gray-500 leading-relaxed">
@@ -175,10 +185,16 @@ const Contact = () => {
             ))}
           </div>
 
-          {/* Social Links */}
+          {/* Social Links — parent variant se animate honge */}
           <motion.div className="flex flex-col gap-4" variants={fadeUp} custom={4}>
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Follow Us</h3>
-            <div className="flex gap-4">
+            <motion.div
+              className="flex gap-4"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.08, delayChildren: 0.0 } }
+              }}
+            >
               {[
                 { icon: <FaLinkedin />, href: "https://www.linkedin.com/company/teyzixcore/", label: "LinkedIn" },
                 { icon: <FaInstagram />, href: "https://www.instagram.com/teyzixcore", label: "Instagram" },
@@ -193,17 +209,14 @@ const Contact = () => {
                   rel="noreferrer"
                   aria-label={social.label}
                   className="bg-green-500/10 border border-green-500/20 p-3 rounded-lg text-green-400 hover:bg-green-500/20 hover:text-green-300 transition text-xl"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  variants={iconFadeUp}
                   whileHover={{ y: -5, scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   {social.icon}
                 </motion.a>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
         </motion.div>
