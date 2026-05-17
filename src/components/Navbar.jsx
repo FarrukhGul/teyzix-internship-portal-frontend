@@ -23,13 +23,13 @@ const Navbar = () => {
       )}
 
       {/* Navbar */}
-      <header className="bg-[#0a0a0a] text-white px-8 py-4 sticky top-0 z-50 border-b border-green-900/40 font-['Sora']">
+      <header className="bg-[#0a0a0a] text-white px-5 sm:px-6 md:px-7 lg:px-8 py-4 sticky top-0 z-50 border-b border-green-900/40 font-['Sora']">
         <div className="max-w-[105rem] mx-auto flex justify-between items-center">
 
           {/* Left Side — Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img src={logo} alt="Teyzix Core Logo" className="h-11 w-auto" />
-            <span className="text-2xl font-bold tracking-wide text-green-500">
+            <span className="text-xl md:text-2xl sm:text-2xl lg:text-2xl font-bold tracking-wide text-green-500">
               Teyzix Core
             </span>
           </Link>
@@ -42,7 +42,7 @@ const Navbar = () => {
               <Link to="/apply" className="text-[15px] font-medium text-gray-300 hover:text-green-400 transition duration-200">Apply</Link>
               <Link to="/contact" className="text-[15px] font-medium text-gray-300 hover:text-green-400 transition duration-200">Contact</Link>
             </nav>
-            <Link to="/admin/login" className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black px-5 py-2.5 rounded-lg text-sm font-semibold transition duration-200 shadow-lg shadow-green-500/10">
+            <Link to="/admin/login" className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-black w-40 h-10 p-5 rounded-lg text-sm font-semibold transition duration-200 shadow-lg shadow-green-500/10">
               <RiAdminFill size={18} />
               Admin Login
             </Link>

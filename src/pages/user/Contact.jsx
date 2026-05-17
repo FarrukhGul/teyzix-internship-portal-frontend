@@ -27,8 +27,8 @@ const Contact = () => {
       {/* Header */}
       <section className="border-b border-green-900/40 py-16">
         <div className="max-w-7xl mx-auto px-8 text-center flex flex-col gap-4">
-          <span className="text-green-400 text-sm font-medium tracking-widest uppercase">● Get In Touch</span>
-          <h1 className="text-5xl font-bold">Contact <span className="text-green-400">Us</span></h1>
+          <span className="text-green-400 text-sm font-medium tracking-widest uppercase"><span className='animate-ping'>●</span> Get In Touch</span>
+          <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">Contact <span className="text-green-400">Us</span></h1>
           <p className="text-gray-500 max-w-xl mx-auto">Have questions about our internship program? We'd love to hear from you.</p>
         </div>
       </section>
